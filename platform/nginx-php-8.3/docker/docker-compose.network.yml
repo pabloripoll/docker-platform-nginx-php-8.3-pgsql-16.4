@@ -1,6 +1,6 @@
 services:
 
-  apirest:
+  be-apirest:
     networks:
       net: {}
 
