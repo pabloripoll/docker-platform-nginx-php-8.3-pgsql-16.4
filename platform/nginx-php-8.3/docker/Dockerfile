@@ -87,7 +87,7 @@ RUN apk add --no-cache \
   postgresql-dev
 
 # Install PHP required extensions from Docker - add if needed: pdo_mysql
-RUN docker-php-ext-install zip gd pdo pdo_pgsql
+RUN docker-php-ext-install zip gd bcmath sockets pcntl pdo pdo_pgsql
 
 # PHP required PECL extensions - (optional: for XDebug uncomment line to use it and add a backslash in previous line)
 RUN apk add \
