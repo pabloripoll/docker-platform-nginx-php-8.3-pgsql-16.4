@@ -13,13 +13,17 @@ ARG UID
 ARG GID
 ENV UID=${UID}
 ENV GID=${GID}
+ARG USER
+ARG GROUP
+ENV USER=${USER}
+ENV GROUP=${GROUP}
 
 # Create user and group
-RUN addgroup -S --gid ${GID} adhera \
-    && adduser -S --uid ${UID} adhera -s /bin/sh -G adhera adhera \
+RUN addgroup -S --gid ${GID} ${GROUP} \
+    && adduser -S --uid ${UID} ${USER} -s /bin/sh -G ${GROUP} ${USER} \
     && apk add --no-cache sudo \
     && chmod u+s /bin/su \
-    && echo "adhera ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Install main packages and remove default server definition
 RUN apk add --no-cache \
@@ -31,9 +35,10 @@ RUN apk add --no-cache \
   zip \
   nano \
   git \
-  #ffmpeg \
   libva-dev \
   supervisor
+  # Audio & Video
+  #ffmpeg \
 
 RUN set -xe \
     && apk add --no-cache --virtual .build-deps \
@@ -72,27 +77,39 @@ RUN apk add --no-cache \
   ${PHP_V}-xmlwriter \
   ${PHP_V}-simplexml \
   ${PHP_V}-zip \
-  # Databases
+  ## Databases
   ${PHP_V}-pdo \
+  # SQLite
   ${PHP_V}-pdo_sqlite \
   ${PHP_V}-sqlite3 \
+  # MySQL - MariaDB
   #${PHP_V}-pdo_mysql \
   #${PHP_V}-mysqlnd \
   #${PHP_V}-mysqli \
+  # Postgre
   ${PHP_V}-pgsql \
   ${PHP_V}-pdo_pgsql \
-  #${PHP_V}-mongodb \
-  #${PHP_V}-redis \
-  # Postgres
   postgresql-dev
+  # MongoDB
+  #${PHP_V}-mongodb \
+  # Redis
+  #${PHP_V}-redis \
 
-# Install PHP required extensions from Docker - add if needed: pdo_mysql
-RUN docker-php-ext-install zip gd bcmath sockets pcntl pdo pdo_pgsql
+# Install PHP required extensions from Docker - add if needed: pdo_mysql pdo_pgsql
+RUN docker-php-ext-install \
+  zip \
+  gd \
+  bcmath \
+  sockets \
+  pcntl \
+  pdo
 
-# PHP required PECL extensions - (optional: for XDebug uncomment line to use it and add a backslash in previous line)
+# PHP required PECL extensions
 RUN apk add \
-  ${PHP_V}-pecl-amqp
+  # XDebug
   #${PHP_V}-pecl-xdebug
+  # RabbitMQ
+  ${PHP_V}-pecl-amqp
 
 # Configure NGINX and remove created its default html directory
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
@@ -100,8 +117,8 @@ COPY config/nginx/conf.d /etc/nginx/conf.d/
 RUN rm -rf /var/www/html
 
 # Configure PHP-FPM
-COPY config/php/fpm-pool.conf /etc/${PHP_V}/php-fpm.d/www.conf
-COPY config/php/php.ini /etc/${PHP_V}/conf.d/custom.ini
+COPY config/php/conf.d/fpm-pool.conf /etc/${PHP_V}/php-fpm.d/www.conf
+COPY config/php/conf.d/php.ini /etc/${PHP_V}/conf.d/custom.ini
 
 # Create symlink for php
 RUN ln -s -f /usr/bin/${PHP_V} /usr/bin/php
@@ -125,19 +142,19 @@ RUN mkdir -p /var/www
 WORKDIR /var/www
 
 # Add application from docker-compose.yml -> volumes: source
-COPY --chown=adhera:adhera ../ /var/www
+COPY --chown=${USER}:${GROUP} ../ /var/www
 
 # Remove unused directories
 RUN rm -rf /var/www/html /var/www/localhost
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
-RUN chown -R adhera:adhera /var/www /run /var/lib/nginx /var/log/nginx
+RUN chown -R ${USER}:${GROUP} /var/www /run /var/lib/nginx /var/log/nginx
 
 # Switch to use a non-root user from here on
-USER adhera
+USER ${USER}
 
 # Expose port/s Nginx will listen - Add more as required: (9003 - Xdebug) - Removed for testing
-EXPOSE 80 443
+EXPOSE 80 443 8080
 
 # Let supervisord start nginx & php-fpm
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
