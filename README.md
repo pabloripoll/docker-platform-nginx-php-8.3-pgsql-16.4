@@ -155,14 +155,16 @@ $ sudo docker stats
 CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
 4afa058af7a9   (?)-pgsql-dev    0.04%     21.23MiB / 128MiB   16.59%    1.17kB / 126B     1.47MB / 59.5MB   6
 e209405673a1   (?)-mailhog-dev  0.00%     4.902MiB / 128MiB   3.83%     1.3kB / 126B      0B / 0B           6
+56ce79ca6c04   (?)-rabbitmq-dev 0.25%     96.2MiB  / 128MiB   75.16%    1.37kB / 126B     22.8MB / 17.2MB   37
 fad4ece8a496   (?)-apirest-dev  0.04%     55.68MiB / 512MiB   10.87%    35.1kB / 25.8kB   1.65MB / 3.5MB    11
 
 NAME                CPU %     MEM USAGE  /  LIMIT    MEM %
 (?)-pgsql-dev       0.04%     21.23MiB   /  128MiB   16.59%
 (?)-mailhog-dev     0.00%     4.902MiB   /  128MiB   3.83%
+(?)-rabbitmq-dev    0.25%     96.2MiB    /  128MiB   75.16%
 (?)-apirest-dev     0.04%     55.68MiB   /  512MiB   10.87%
 ----------------------------------------------------------------------
------------------------------ 81.812MiB  /  768MiB
+---------------------------- 178.012MiB  /  896MiB
 ```
 
 ### Managing the `apirest` Directory: Submodule vs Detached Repository
