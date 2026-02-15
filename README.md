@@ -13,8 +13,6 @@ This Infrastructure Platform repository is designed for back-end projects and pr
 - **REST API Platform:** Linux Alpine version 3.21 + NGINX version 1.28 *(or latest by APK)* + PHP 8.3
 - **Core Database Platform:** Linux Alpine version 3.20 + Postgres 16.4
 - **Mail Service Platform:** Linux Alpine version 3.12 + Mailhog 1.0
-- **Documentation Database Platform:** MongoDB 8.2 *(editable version)*
-- **Cache Database Platform:** Linux Alpine version 3.23 + Redis 8.6
 - **Message Broker Platform:** RabbitMQ 4.2 *(editable version)*
 
 The goal of this repository is to offer developers a consistent framework for local development, mirroring real-world deployment scenarios. In production, the API may be deployed on an AWS EC2 / GCP GCE or instance or distributed across Kubernetes pods, while the database would reside on an AWS RDS instance. thus, network connection between platforms are decoupled.
