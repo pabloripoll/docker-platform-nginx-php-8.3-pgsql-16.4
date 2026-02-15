@@ -1,16 +1,12 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Editor directories and files
-.vscode/*
+# Editor and IDE files
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
+*.iml
+*.swp
+*~
+*.sublime-project
+*.sublime-workspace
 .DS_Store
 *.suo
 *.ntvs*
@@ -25,23 +21,39 @@ vendor
 node_modules
 dist
 dist-ssr
-*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temp
+logs
+*.log
+*.tmp
+*.tmp.*
+*.cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Repository
-/vault
-/platform/nginx-php-*/docker/config/php/conf.d/
-!/platform/nginx-php-*/docker/config/php/conf.d/.gitkeep
-/platform/nginx-php-*/docker/config/nginx/conf.d/
-!/platform/nginx-php-*/docker/config/nginx/conf.d/.gitkeep
-/platform/nginx-php-*/docker/config/supervisor/conf.d
-!/platform/nginx-php-*/docker/config/supervisor/conf.d/.gitkeep
-/resources/database/*
-!/resources/database/.gitkeep
-/resources/docs/apirest/project/*
-!/resources/docs/apirest/project/.gitkeep
-/platform/pgsql-*/data/*
-!/platform/pgsql-*/data/.gitkeep
+
+# Platforms
+
+# Project Schemas Samples
+/resources/docs/apirest/*
+!/resources/docs/apirest/.gitkeep
+/resources/databases/*
+!/resources/databases/.gitkeep
+
+# API content
 /apirest/*
 !/apirest/.gitkeep
 /webapp/*
 !/webapp/.gitkeep
+
+# Personal developer vault
+/vault
