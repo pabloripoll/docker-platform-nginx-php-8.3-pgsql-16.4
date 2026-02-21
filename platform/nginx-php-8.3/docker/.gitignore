@@ -1,4 +1,5 @@
 # .gitignore custom settings
+.env
 /config/php/conf.d/*
 !/config/php/conf.d/.gitkeep
 /config/nginx/conf.d/*

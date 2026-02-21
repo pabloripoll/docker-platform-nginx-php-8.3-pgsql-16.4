@@ -44,8 +44,8 @@ lerna-debug.log*
 # Platforms
 
 # Project Schemas Samples
-/resources/docs/apirest/*
-!/resources/docs/apirest/.gitkeep
+/resources/apirest/*
+!/resources/apirest/.gitkeep
 /resources/databases/*
 !/resources/databases/.gitkeep
 

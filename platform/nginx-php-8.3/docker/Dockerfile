@@ -1,5 +1,5 @@
 ## Sources to build the container
-FROM alpine:3.21
+FROM alpine:3.23
 FROM php:8.3-fpm-alpine
 
 ARG UID
@@ -33,7 +33,7 @@ RUN apk add --no-cache \
   nano \
   #zip \
   #ffmpeg \
-  ## OS Process Control
+  ## Process Control System
   supervisor
 
 RUN set -xe \
@@ -82,12 +82,12 @@ RUN apk add --no-cache \
   php83-pgsql \
   php83-pdo_pgsql \
   postgresql-dev \
-  ## Rabbitmq / Redis
+  ## Redis / RabbitMQ
   php83-pecl-amqp
   ## XDebug
   #php83-pecl-xdebug
 
-## Install amqp via PECL for clients that use the native ext-amqp like RabbitMQ / Redis
+# Install amqp via PECL for clients that use the native ext-amqp like RabbitMQ
 RUN apk add --no-cache rabbitmq-c
 RUN set -eux; \
     apk add --no-cache --virtual .amqp-build-deps $PHPIZE_DEPS rabbitmq-c-dev; \
@@ -100,11 +100,8 @@ RUN set -eux; \
 ## PHP required extensions from Docker
 RUN docker-php-ext-install \
   pdo \
-  ## Postgre
   pdo_pgsql \
-  ## Sockets
   sockets \
-  ## Process Control (jobs)
   pcntl
 
 ## Clean up build dependencies to reduce image size
