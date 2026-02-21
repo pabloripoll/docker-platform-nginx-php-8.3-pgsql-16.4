@@ -51,16 +51,16 @@ local-ownership-set: ## sets recursively local root directory ownership
 	$(SUDO) chown -R ${user}:${group} $(ROOT_DIR)/
 
 services-set: ## sets all container services
-	$(MAKE) apirest-set mailer-set db-set broker-set mongodb-set redis-set
+	$(MAKE) apirest-set mailer-set db-set broker-set
 
 services-create: ## builds and starts up all container services
-	$(MAKE) apirest-create mailer-create db-create broker-create mongodb-create redis-create
+	$(MAKE) apirest-create mailer-create db-create broker-create
 
 services-info: ## shows all container services information
-	$(MAKE) apirest-info mailer-info db-info broker-info mongodb-info redis-info
+	$(MAKE) apirest-info mailer-info db-info broker-info
 
 services-destroy: ## destroys all container services
-	$(MAKE) apirest-destroy mailer-destroy db-destroy broker-destroy mongodb-destroy redis-destroy
+	$(MAKE) apirest-destroy mailer-destroy db-destroy broker-destroy
 
 # -------------------------------------------------------------------------------------------------
 #  Backend API Service
@@ -236,108 +236,6 @@ db-sql-backup: ## copies the container main database as backup into a .sql file
 db-sql-drop: ## drops the container main database but recreates the database without schema as a reset action
 	$(MAKE) local-ownership-set;
 	cd platform/$(DATABASE_PLTF) && $(MAKE) sql-drop
-
-# -------------------------------------------------------------------------------------------------
-#  MongoDB Service
-# -------------------------------------------------------------------------------------------------
-.PHONY: mongodb-hostcheck mongodb-info mongodb-set mongodb-create mongodb-ssh mongodb-start mongodb-stop mongodb-destroy
-
-mongodb-hostcheck: ## shows this project ports availability on local machine for database container
-	cd platform/$(MONGODB_PLTF) && $(MAKE) port-check
-
-mongodb-info: ## shows docker related information
-	cd platform/$(MONGODB_PLTF) && $(MAKE) info
-
-mongodb-set: ## sets the database enviroment file to build the container
-	cd platform/$(MONGODB_PLTF) && $(MAKE) env-set
-
-mongodb-create: ## creates the database container from Docker image
-	cd platform/$(MONGODB_PLTF) && $(MAKE) build up
-
-mongodb-network: ## creates the database container external network
-	$(MAKE) apirest-stop
-	cd platform/$(MONGODB_PLTF) && $(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.network.yml up -d
-
-mongodb-ssh: ## enters the apirest container shell
-	cd platform/$(MONGODB_PLTF) && $(MAKE) ssh
-
-mongodb-start: ## starts the database container running
-	cd platform/$(MONGODB_PLTF) && $(MAKE) start
-
-mongodb-stop: ## stops the database container but its assets will not be destroyed
-	cd platform/$(MONGODB_PLTF) && $(MAKE) stop
-
-mongodb-restart: ## restarts the running database container
-	cd platform/$(MONGODB_PLTF) && $(MAKE) restart
-
-mongodb-destroy: ## destroys completly the database container with its data
-	echo ${C_RED}"Attention!"${C_END};
-	echo ${C_YEL}"You're about to remove the "${C_BLU}"$(MONGODB_PLTF)"${C_END}" container and delete its image resource and persistance data."${C_END};
-	@echo -n ${C_RED}"Are you sure to proceed? "${C_END}"[y/n]: " && read response && if [ $${response:-'n'} != 'y' ]; then \
-        echo ${C_GRN}"K.O.! container has been stopped but not destroyed."${C_END}; \
-    else \
-		cd platform/$(MONGODB_PLTF) && $(MAKE) stop clear destroy; \
-		echo -n ${C_GRN}"Do you want to clear DOCKER cache? "${C_END}"[y/n]: " && read response && if [ $${response:-'n'} != 'y' ]; then \
-			echo ${C_YEL}"The following commands are delegated to be executed by user:"${C_END}; \
-			echo "$$ $(DOCKER) system prune"; \
-			echo "$$ $(DOCKER) volume prune"; \
-		else \
-			$(DOCKER) system prune; \
-			$(DOCKER) volume prune; \
-			echo ${C_GRN}"O.K.! DOCKER cache has been cleared up."${C_END}; \
-		fi \
-	fi
-
-# -------------------------------------------------------------------------------------------------
-#  Redis Service
-# -------------------------------------------------------------------------------------------------
-.PHONY: redis-hostcheck redis-info redis-set redis-create redis-ssh redis-start redis-stop redis-destroy
-
-redis-hostcheck: ## shows this project ports availability on local machine for database container
-	cd platform/$(REDIS_PLTF) && $(MAKE) port-check
-
-redis-info: ## shows docker related information
-	cd platform/$(REDIS_PLTF) && $(MAKE) info
-
-redis-set: ## sets the database enviroment file to build the container
-	cd platform/$(REDIS_PLTF) && $(MAKE) env-set
-
-redis-create: ## creates the database container from Docker image
-	cd platform/$(REDIS_PLTF) && $(MAKE) build up
-
-redis-network: ## creates the database container external network
-	$(MAKE) apirest-stop
-	cd platform/$(REDIS_PLTF) && $(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.network.yml up -d
-
-redis-ssh: ## enters the apirest container shell
-	cd platform/$(REDIS_PLTF) && $(MAKE) ssh
-
-redis-start: ## starts the database container running
-	cd platform/$(REDIS_PLTF) && $(MAKE) start
-
-redis-stop: ## stops the database container but its assets will not be destroyed
-	cd platform/$(REDIS_PLTF) && $(MAKE) stop
-
-redis-restart: ## restarts the running database container
-	cd platform/$(REDIS_PLTF) && $(MAKE) restart
-
-redis-destroy: ## destroys completly the database container with its data
-	echo ${C_RED}"Attention!"${C_END};
-	echo ${C_YEL}"You're about to remove the "${C_BLU}"$(REDIS_PLTF)"${C_END}" container and delete its image resource and persistance data."${C_END};
-	@echo -n ${C_RED}"Are you sure to proceed? "${C_END}"[y/n]: " && read response && if [ $${response:-'n'} != 'y' ]; then \
-        echo ${C_GRN}"K.O.! container has been stopped but not destroyed."${C_END}; \
-    else \
-		cd platform/$(REDIS_PLTF) && $(MAKE) stop clear destroy; \
-		echo -n ${C_GRN}"Do you want to clear DOCKER cache? "${C_END}"[y/n]: " && read response && if [ $${response:-'n'} != 'y' ]; then \
-			echo ${C_YEL}"The following commands are delegated to be executed by user:"${C_END}; \
-			echo "$$ $(DOCKER) system prune"; \
-			echo "$$ $(DOCKER) volume prune"; \
-		else \
-			$(DOCKER) system prune; \
-			$(DOCKER) volume prune; \
-			echo ${C_GRN}"O.K.! DOCKER cache has been cleared up."${C_END}; \
-		fi \
-	fi
 
 # -------------------------------------------------------------------------------------------------
 #  Broker Service
